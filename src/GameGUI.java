@@ -78,7 +78,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
         options.add(scissors);
         options.add(quit);
 
-        Border border = BorderFactory.createEmptyBorder(10,10,10,10);
+        Border border = BorderFactory.createMatteBorder(10,10,10,10, Color.BLACK);
         options.setBorder(border);
 
         super.add(options, BorderLayout.PAGE_START);
@@ -234,17 +234,16 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
      * @return the text to display in the results text area
      */
     private String GetResultsString(String playerMove, String computerMove){
-        //FIXME: should be updated to check based on string.equals()
-        if((playerMove == "Rock" && computerMove == "Scissors") ||
-                (playerMove == "Scissors" && computerMove == "Rock")){
+        if((playerMove.equals("Rock") && computerMove.equals("Scissors")) ||
+                (playerMove.equals("Scissors") && computerMove.equals("Rock"))){
             return "Rock beats Scissors.";
         }
-        else if((playerMove == "Paper" && computerMove == "Rock") ||
-                (playerMove == "Rock" && computerMove == "Paper")){
+        else if((playerMove.equals("Rock") && computerMove.equals("Paper")) ||
+                (playerMove.equals("Paper") && computerMove.equals("Rock"))){
             return "Paper beats Rock.";
         }
-        else if((playerMove == "Scissors" && computerMove == "Paper") ||
-                (playerMove == "Paper" && computerMove == "Scissors")){
+        else if((playerMove.equals("Paper") && computerMove.equals("Scissors")) ||
+                (playerMove.equals("Scissors") && computerMove.equals("Paper"))){
             return "Scissors beats Paper.";
         }
         else{
@@ -325,35 +324,8 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
             if (previousMove == null) {
                 return new Strategy_Random().getMove(playerMove);
             }
-            else if(previousMove == "Rock") return "Paper";
-            else if(previousMove == "Paper") return "Scissors";
-            else return "Rock";
-        }
-    }
-
-    /**
-     * returns a random move
-     */
-    public class Strategy_Random implements IStrategy{
-        public String getMove(String playerMove){
-            String returnString = "";
-            int random = (int)(Math.random()*3);
-            switch(random){
-                case 0: returnString = "Rock"; break;
-                case 1: returnString = "Paper"; break;
-                case 2: returnString = "Scissors"; break;
-            }
-            return returnString;
-        }
-    }
-
-    /**
-     * reads the players current move and then returns what would beat it
-     */
-    public class Strategy_Cheat implements IStrategy{
-        public String getMove(String playerMove){
-            if(playerMove == "Rock") return "Paper";
-            else if(playerMove == "Paper") return "Scissors";
+            else if(previousMove.equals("Rock")) return "Paper";
+            else if(previousMove.equals("Paper")) return "Scissors";
             else return "Rock";
         }
     }
