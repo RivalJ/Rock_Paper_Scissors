@@ -1,5 +1,8 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Set;
 
 public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
@@ -65,19 +68,40 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
         SetUpButtonVisuals(quit, "Quit.jpg", imageSize);
 
         //assign actions to buttons
-        rock.addActionListener(e -> ResolveMove("Rock"));
-        paper.addActionListener(e -> ResolveMove("Paper"));
-        scissors.addActionListener(e -> ResolveMove("Scissors"));
-
-        quit.addActionListener(e -> System.exit(0));//assign quit to close the game
+        rock.addActionListener(new ButtonListener());
+        paper.addActionListener(new ButtonListener());
+        scissors.addActionListener(new ButtonListener());
+        quit.addActionListener(new ButtonListener());
 
         options.add(rock);
         options.add(paper);
         options.add(scissors);
         options.add(quit);
-        //FIXME: buttons need images
+
+        Border border = BorderFactory.createEmptyBorder(10,10,10,10);
+        options.setBorder(border);
 
         super.add(options, BorderLayout.PAGE_START);
+    }
+
+    private class ButtonListener implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (command.equals("Rock")) {
+                ResolveMove("Rock");
+            } else if (command.equals("Paper")) {
+                ResolveMove("Paper");
+            } else if (command.equals("Scissors")) {
+                ResolveMove("Scissors");
+            }
+            else if (command.equals("Quit")) {
+                System.exit(0);
+            }
+            else {
+                System.out.println("Invalid command: " + command);
+            }
+        }
     }
 
     /**
@@ -180,14 +204,14 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
         //it will actually be based on a strat that the comp chooses
         String stratUsed = GetComputerStrategy(playerMove);
 
-        if(playerMove == computerMove){
+        if(playerMove.equals(computerMove)){
             ties++;
             gameResults = GetResultsString(playerMove, computerMove) + " Tie!";
         }
         else if(
-                playerMove == "Rock" && computerMove == "Scissors" ||
-                        playerMove == "Paper" && computerMove == "Rock" ||
-                        playerMove == "Scissors" && computerMove == "Paper"
+                playerMove.equals("Rock") && computerMove.equals("Scissors") ||
+                        playerMove.equals("Paper") && computerMove.equals("Rock") ||
+                        playerMove.equals("Scissors") && computerMove.equals("Paper")
         ){
             playerWins++;
             gameResults = GetResultsString(playerMove, computerMove) + " You Win!";
@@ -198,6 +222,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
         }
         UpdateStats();
         resultsArea.append(gameResults + " " + stratUsed + "\n");
+        previousMove = playerMove;
     }
 
     /**
@@ -209,7 +234,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
      * @return the text to display in the results text area
      */
     private String GetResultsString(String playerMove, String computerMove){
-
+        //FIXME: should be updated to check based on string.equals()
         if((playerMove == "Rock" && computerMove == "Scissors") ||
                 (playerMove == "Scissors" && computerMove == "Rock")){
             return "Rock beats Scissors.";
@@ -220,7 +245,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
         }
         else if((playerMove == "Scissors" && computerMove == "Paper") ||
                 (playerMove == "Paper" && computerMove == "Scissors")){
-            return "Paper beats Rock.";
+            return "Scissors beats Paper.";
         }
         else{
             return playerMove + " vs " + computerMove + ".";
@@ -241,7 +266,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
 
     private String GetComputerStrategy(String playerMove){
         String returnString = "Strategy used: ";
-        int random = (int)(Math.random()*101);
+        int random = (int)(Math.random() * 100) + 1;
         if(random <= 10){
             computerMove = new Strategy_Cheat().getMove(playerMove);
             returnString += "Cheat";
@@ -272,9 +297,9 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
     public class Strategy_LeastUsed implements IStrategy{
         public String getMove(String playerMove){
             int leastUsed = Math.min(playerRockCount, Math.min(playerPaperCount, playerScissorsCount));
-            if(leastUsed == playerRockCount) return "Rock";
-            else if(leastUsed == playerPaperCount) return "Paper";
-            else return "Scissors";
+            if(leastUsed == playerRockCount) return "Paper";
+            else if(leastUsed == playerPaperCount) return "Scissors";
+            else return "Rock";
         }
     }
 
@@ -285,18 +310,22 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
     public class Strategy_MostUsed implements IStrategy{
         public String getMove(String playerMove){
             int mostUsed = Math.max(playerRockCount, Math.max(playerPaperCount, playerScissorsCount));
-            if(mostUsed == playerRockCount) return "Rock";
-            else if(mostUsed == playerPaperCount) return "Paper";
-            else return "Scissors";
+            if(mostUsed == playerRockCount) return "Paper";
+            else if(mostUsed == playerPaperCount) return "Scissors";
+            else return "Rock";
         }
     }
 
     /**
      * use previous move to determine what to beat
+     * if previous move is null, get a random move instead
      */
     public class Strategy_LastUsed implements IStrategy{
         public String getMove(String playerMove){
-            if(previousMove == "Rock") return "Paper";
+            if (previousMove == null) {
+                return new Strategy_Random().getMove(playerMove);
+            }
+            else if(previousMove == "Rock") return "Paper";
             else if(previousMove == "Paper") return "Scissors";
             else return "Rock";
         }

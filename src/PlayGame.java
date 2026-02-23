@@ -1,7 +1,10 @@
+import javax.swing.*;
+
 public class PlayGame {
     private GameGUI gameGUI;
     public static void main(String[] args) {
-        GameGUI gameGUI = new GameGUI();
-        gameGUI.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            new GameGUI().setVisible(true);
+        });
     }
 }
