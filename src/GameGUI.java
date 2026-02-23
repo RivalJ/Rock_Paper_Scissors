@@ -26,10 +26,11 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
     private void Setup(){
         //add a title label
         Dimension baseScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        float applicationScaleFactor = 3f/4f;
+        float applicationScaleFactorWidth = 1f/3f;
+        float applicationScaleFactorHeight = 2f/3f;
         Dimension applicationSize = new Dimension(
-                (int)(baseScreenSize.width * applicationScaleFactor),
-                (int)(baseScreenSize.height * applicationScaleFactor)
+                (int)(baseScreenSize.width * applicationScaleFactorWidth),
+                (int)(baseScreenSize.height * applicationScaleFactorHeight)
         );
 
         super.setTitle("Rock Paper Scissors");
@@ -49,8 +50,6 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
      * intended to make setup code cleaner and easier to read
      */
     private void SetupOptions(){
-        //FIXME: needs a bigger font
-        //FIXME: needs a border
         options = new JPanel();
         //create buttons
         JButton rock, paper, scissors, quit;
@@ -80,6 +79,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
 
         Border border = BorderFactory.createMatteBorder(10,10,10,10, Color.BLACK);
         options.setBorder(border);
+
 
         super.add(options, BorderLayout.PAGE_START);
     }
@@ -119,6 +119,7 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
         icon = icon.getScaledInstance(imageSize,imageSize,Image.SCALE_SMOOTH);
 
         button.setIcon(new ImageIcon(icon));
+        button.setFont(new Font("Arial", Font.BOLD, 30));
     }
 
     /**
@@ -126,9 +127,9 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
      * intended to make setup code cleaner and easier to read
      */
     private void SetupStats(){
-        //FIXME: needs a bigger font
         stats = new JPanel();
         JPanel playerWins, computerWins, ties;
+        Font font = new Font("Arial", Font.BOLD, 20);
 
         //create text fields
         playerWinsField = new JTextField(2);
@@ -138,13 +139,24 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
 
         //set non-editable
         playerWinsField.setEditable(false);
+        playerWinsField.setFont(font);
+
         computerWinsField.setEditable(false);
+        computerWinsField.setFont(font);
+
         tiesField.setEditable(false);
+        tiesField.setFont(font);
+
 
         //create labels
         JLabel playerWinsLabel = new JLabel("Player Wins:");
+        playerWinsLabel.setFont(font);
+
         JLabel computerWinsLabel = new JLabel("Computer Wins:");
+        computerWinsLabel.setFont(font);
+
         JLabel tiesLabel = new JLabel("Ties:");
+        tiesLabel.setFont(font);
 
 
         //add labels and text fields to corresponding panels
@@ -193,7 +205,6 @@ public class GameGUI extends JFrame {//FIXME: All methods need to have javadocs
      * @param playerMove the player's move
      */
     private void ResolveMove(String playerMove){
-        //FIXME: something is wrong and the player does not always win when they should
         switch(playerMove){//increment the appropriate counter
             case "Rock": playerRockCount++; break;
             case "Paper": playerPaperCount++; break;
